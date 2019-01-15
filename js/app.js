@@ -38,25 +38,29 @@
     }
 
     function createBoard() {
-        /*
-            Shuffle cards in deck
-            Loop through cards and insert cardType in card
-        */
        const shuffleCards = shuffle(cardType);
+       const cards = document.body.querySelectorAll('.card');
+
+       for (let i = 0; i < cards.length; i++) {
+           cards[i].innerHTML = shuffleCards[i];
+       }
     }
 
     function chooseCard(evt) {
-        /*
-        If openCards is odd 
-            then [unshift] the clicked  and compare the first index with second index to see if they match [run check match function].
-        Else
-            Create array with class to show and open
-            Apply class to card using classList
-            Store choice as first index [unshift] in a openCards array 
-        End
-        */
-       console.log(`It's clicked, ${evt.target.firstElementChild.className}`);
+        const target = evt.target;
+        const cls = ["show", "open"];
+    
+        if (openCards.length % 2 !== 0) {
+            openCards.unshift(target.firstElementChild.className);
+            if (openCards[0] === openCards[1]) {
+                checkMatch();
+            }
+        } else {
+            target.classList.add(...cls);
+            openCards.unshift(target.firstElementChild.className);
+        }
        moveCounter();
+       console.log(openCards);
     }
 
     function checkMatch(cls) {
@@ -78,21 +82,11 @@
     function moveCounter() {
         const moves = document.body.querySelector('.moves');
         let moveCount = 0;
-
         moves.textContent = moveCount;
         // Incerement moves counter
     }
 
+    createBoard();
     document.body.querySelector('.deck').addEventListener('click', chooseCard);
 })();
 
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
