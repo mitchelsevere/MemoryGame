@@ -23,7 +23,7 @@
         '<i class="fa fa-bicycle"></i>',
         '<i class="fa fa-bomb"></i>'
     ];
-    
+    const deck = document.body.querySelector('.deck');
     const openCards = []; // The open cards
     const matchCards = []; // All of the match cards
     const cls = ["show", "open"];
@@ -56,35 +56,48 @@
         const target = evt.target;
         
         if (time === 0) {
-            timer();
+            // timer();
         }
 
         if (!target.classList.contains('show') || !target.classList.contains('match')) {
-            openCards.unshift(target);
+            openCards.push(target);
             target.classList.add(...cls);
 
             if (openCards.length === 2) {
+                deck.removeEventListener('click', chooseCards);
                 setTimeout(function() {
                     for (let card of openCards) {
                         card.classList.remove(...cls);
                     }
+                    checkMatch();
                 }, 1000);
             }
         }
     }
 
     function checkMatch() {
-        
+        let cardOne = openCards[0].firstElementChild.classList[1];
+        let cardTwo = openCards[1].firstElementChild.classList[1];
+        console.log(cardOne, cardTwo);
+        if (cardOne === cardTwo) {
+            for (let card of openCards) {
+                card.classList.add('match');
+            }
+            matchCards.push(...openCards);
+        }
+        openCards.splice(0, 2);
+        deck.addEventListener('click', chooseCards);
     }
 
     function gameOver() {
-        if (openCards.length === 16) {
+        if (matchCards.length === 16) {
+            console.log('game over');
             return true;
         } 
     }
 
     function restartGame() {
-        for (let card of openCards) {
+        for (let card of matchCards) {
             card.classList.remove("match", "no-match", ...cls);
         }
         openCards.splice(0);
@@ -110,7 +123,7 @@
     }
 
     createBoard();
-    document.body.querySelector('.deck').addEventListener('click', chooseCards);
+    deck.addEventListener('click', chooseCards);
     document.body.querySelector('.fa-repeat').addEventListener('click', restartGame);
 })();
 

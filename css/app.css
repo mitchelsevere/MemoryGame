@@ -81,8 +81,8 @@ h1 {
     cursor: default;
     background: #02ccba;
     font-size: 33px;
-    animation: blink 1000ms ease-in-out;
-    transition: all 5ms ease-out;
+    animation: blink 400ms ease-in-out;
+    transition: all 400ms ease-out;
 }
 
 @keyframes blink {
