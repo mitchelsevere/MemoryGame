@@ -1,5 +1,9 @@
 (function() {
     console.log('app.js is loaded...');
+    let clock;
+    let time = 0;
+    let moveCount = 0;
+
     // list of cards
     const cardType = [
         '<i class="fa fa-diamond"></i>',
@@ -20,7 +24,9 @@
         '<i class="fa fa-bomb"></i>'
     ];
     
-    const openCards = []; // All of the open cards
+    const openCards = []; // The open cards
+    const matchCards = []; // All of the match cards
+    const cls = ["show", "open"];
 
     // Shuffle function from http://stackoverflow.com/a/2450976
     function shuffle(array) {
@@ -46,47 +52,65 @@
        }
     }
 
-    function chooseCard(evt) {
+    function chooseCards(evt) {
         const target = evt.target;
-        const cls = ["show", "open"];
-    
-        if (openCards.length % 2 !== 0) {
-            openCards.unshift(target.firstElementChild.className);
-            if (openCards[0] === openCards[1]) {
-                checkMatch();
-            }
-        } else {
-            target.classList.add(...cls);
-            openCards.unshift(target.firstElementChild.className);
+        
+        if (time === 0) {
+            timer();
         }
-       moveCounter();
-       console.log(openCards);
+
+        if (!target.classList.contains('show') || !target.classList.contains('match')) {
+            openCards.unshift(target);
+            target.classList.add(...cls);
+
+            if (openCards.length === 2) {
+                setTimeout(function() {
+                    for (let card of openCards) {
+                        card.classList.remove(...cls);
+                    }
+                }, 1000);
+            }
+        }
     }
 
-    function checkMatch(cls) {
-        /* 
-        If a match 
-            then unshift the current element and change the first two elements class to match and remove open and show 
-        Else
-            then remove the open and show class and splice the 0 and 1 index from openCards array
-        End
-        */
+    function checkMatch() {
+        
     }
 
     function gameOver() {
-        /*
-            If open cards array is === 16 then game is over and message is displayed
-        */
+        if (openCards.length === 16) {
+            return true;
+        } 
+    }
+
+    function restartGame() {
+        for (let card of openCards) {
+            card.classList.remove("match", "no-match", ...cls);
+        }
+        openCards.splice(0);
+        createBoard();
     }
 
     function moveCounter() {
         const moves = document.body.querySelector('.moves');
-        let moveCount = 0;
+        const stars = document.body.querySelectorAll('.stars li');
+        moveCount++;
         moves.textContent = moveCount;
-        // Incerement moves counter
+    }
+
+    function timer() {
+        clock = setInterval(function() { 
+            if (gameOver) {
+                ++time;
+                console.log(time);
+            } else {
+                clearInterval(clock);
+            }
+        }, 1000);
     }
 
     createBoard();
-    document.body.querySelector('.deck').addEventListener('click', chooseCard);
+    document.body.querySelector('.deck').addEventListener('click', chooseCards);
+    document.body.querySelector('.fa-repeat').addEventListener('click', restartGame);
 })();
 
