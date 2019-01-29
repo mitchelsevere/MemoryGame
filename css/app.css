@@ -71,6 +71,7 @@ h1 {
     transform: rotateY(0);
     background: #02b3e4;
     cursor: default;
+    pointer-events: none;
 }
 
 .deck .card.show {
@@ -84,6 +85,15 @@ h1 {
     animation: blink 400ms ease-in-out;
     transition: all 400ms ease-out;
 }
+
+.deck .card.no-match {
+    cursor: default;
+    background: red;
+    font-size: 33px;
+    animation: blink 400ms ease-in-out;
+    transition: all 400ms ease-out;
+}
+
 
 @keyframes blink {
     0% { background: inherit; } 
