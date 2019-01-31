@@ -1,10 +1,12 @@
 (function() {
     console.log('app.js is loaded...');
+    
     let clock; 
+    let moveCount;
     let time = 0;
-    let moveCount = 0;
-    const deck = document.body.querySelector('.deck');
-    const moves = document.body.querySelector('.moves');
+    const body = document.body;
+    const deck = body.querySelector('.deck');
+    const moves = body.querySelector('.moves');
     const openCards = []; // The open cards
     const matchCards = []; // All of the match cards
     const cls = ["show", "open"];
@@ -45,8 +47,9 @@
 
     function createBoard() {
        const shuffleCards = shuffle(cardType);
-       const cards = document.body.querySelectorAll('.card');
+       const cards = body.querySelectorAll('.card');
        moves.textContent = 0;
+       moveCount = 0;
 
        for (let i = 0; i < cards.length; i++) {
            cards[i].innerHTML = shuffleCards[i];
@@ -80,7 +83,6 @@
     function checkMatch() {
         let cardOne = openCards[0].firstElementChild.classList[1];
         let cardTwo = openCards[1].firstElementChild.classList[1];
-        console.log(cardOne, cardTwo);
         if (cardOne === cardTwo) {
             for (let card of openCards) {
                 card.classList.add('match');
@@ -99,44 +101,65 @@
         gameOver();
     }
 
-    function gameOver() {
-        if (matchCards.length === 16) {
-            console.log('game over');
-            return true;
-        } 
+    function gameOver(restart) {
+        let modal = body.querySelector('.modal');
+        if (matchCards.length === 16) { modal.classList.add('show') }
+        if (matchCards.length === 16 || restart) { timer(true) } 
         return false;
     }
 
-    function restartGame() {
+    function restartGame(status = false) {
         for (let card of matchCards) {
             card.classList.remove("match", "no-match", ...cls);
         }
         openCards.splice(0);
         createBoard();
+        gameOver(status);
     }
 
     function moveCounter() {
-        const stars = document.body.querySelectorAll('.stars li');
+        const stars = body.querySelectorAll('.stars li');
+        let move;
         moveCount++;
+
         if (moveCount % 2 === 0) {
-            moves.textContent = moveCount / 2;
+            move = moveCount / 2;
+            moves.textContent = move;
         }
+        
+        switch(move) {
+            case 10:
+                stars[stars.length - 1].remove();
+                break;
+            case 14: 
+                stars[stars.length - 1].remove();
+                break;
+            default:
+                break;
+        }
+        
     }
    
-    function timer() {
+    function timer(status) {
+        clearInterval(clock);
         clock = setTimeout(timer, 1000); // Interval for timer 
-        if (gameOver()) {
-            console.log('interval cleared');
-            clearInterval(clock);
-            clock = 0;
-        } 
-
         time = time + 1;
         console.log(time);
+
+        if (status) {
+            console.log('interval cleared');
+            clearInterval(clock);
+            clock = null;
+            time = 0;
+        } 
     }
 
     createBoard();
+
     deck.addEventListener('click', chooseCards);
-    document.body.querySelector('.fa-repeat').addEventListener('click', restartGame);
+    body.querySelector('.fa-repeat').addEventListener('click', 
+        function() {
+            restartGame(true); 
+        }, false);
 })();
 
